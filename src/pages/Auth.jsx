@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Radio, Typography } from "antd";
-import Cards from "../components/Cards";
+import Cards from "../components/common/Cards";
 
 const { Title } = Typography;
 const Auth = () => {

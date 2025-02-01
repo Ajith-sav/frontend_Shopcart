@@ -3,10 +3,9 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import { useUser } from "./contexts/UserContext";
-import { useEffect } from "react";
-import Product from "./components/Product";
+import Product from "./components/vendor/Product";
 import Vendor from "./pages/Vendor";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
   const token = localStorage.getItem("access");
@@ -26,11 +25,10 @@ function App() {
       <Routes>
         <Route element={<ProtectedRoute />}>
           <Route path="/auth" element={<Navigate to={"/"} />} />
-          {user?.role != "vendor" ? (
+          {user?.role == "customer" ? (
             <>
               <Route path="/" element={<Navigate to={"/home"} />} />
               <Route path="/home" element={<Home />} />
-              {/* <Route path="/products" element={<Product editMode={false} />} /> */}
             </>
           ) : (
             <>

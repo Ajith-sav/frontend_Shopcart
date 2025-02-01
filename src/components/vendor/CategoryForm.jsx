@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Input, message } from "antd";
-import { createCategory } from "../services/api";
+import { createCategory } from "../../services/api";
 
 const CategoryForm = ({ onSuccess }) => {
   const [form] = Form.useForm();

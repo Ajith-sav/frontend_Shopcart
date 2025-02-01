@@ -9,7 +9,7 @@ const Views = ({ product }) => {
     ? product.name[0].toUpperCase() + product.name.slice(1)
     : "Unknown Product";
   const category = product.categories?.[0] ?? { name: "Unknown Category" };
-  const productImage = product.image || "https://via.placeholder.com/240x350";
+  const productImage = product.image || `http://localhost:8000${product.image}`;
 
   const productInfo = async () => {
     if (!product.slug) return;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Form, Input, message, Switch, Space, Select } from "antd";
-import { signupUser } from "../services/api";
-import "../styles/signup.css";
+import { signupUser } from "../../services/api";
+import "../../styles/Signup.css";
 
 const roleList = [
   { role: "Vendor", values: "vendor" },

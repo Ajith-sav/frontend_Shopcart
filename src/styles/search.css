@@ -1,0 +1,12 @@
+.search-input input::placeholder {
+  color: #828181;
+  text-align: center;
+  font-weight: 500;
+  font-style: italic;
+  transition: color 0.7s ease-in-out;
+  animation: rotateIn 0.9s ease-in-out;
+}
+
+.search-input .ant-input {
+  font-weight: 500;
+}

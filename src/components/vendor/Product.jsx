@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchCategory,
   createProduct,
   fetchProduct,
   updateProduct,
-} from "../services/api";
-
+  deleteProduct,
+} from "../../services/api";
 
 import {
   message,
@@ -19,7 +19,7 @@ import {
   Switch,
   Upload,
   Select,
-  Space,
+  Image,
   Spin,
   Row,
   Col,
@@ -38,6 +38,15 @@ const normFile = (e) => {
   return e?.fileList;
 };
 
+const getBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 const Product = ({ editMode }) => {
   const { slug } = useParams();
   const [refresh, setRefresh] = useState(false);
@@ -46,7 +55,10 @@ const Product = ({ editMode }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
   const getCategories = async () => {
     try {
@@ -54,7 +66,6 @@ const Product = ({ editMode }) => {
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {
-        // console.error("Expected an array but got:", response.data);
         setCategories([]);
       }
     } catch (error) {
@@ -82,7 +93,14 @@ const Product = ({ editMode }) => {
       setProduct(response.data);
 
       if (response.data.image) {
-        setFileList([]);
+        setFileList([
+          {
+            uid: "-1",
+            name: "product-image",
+            status: "done",
+            url: response.data.image,
+          },
+        ]);
       }
     } catch (error) {
       const errorMessage =
@@ -102,6 +120,14 @@ const Product = ({ editMode }) => {
     setFileList(newFileList);
   };
 
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+
   const onSuccess = () => {
     setRefresh(!refresh);
   };
@@ -119,10 +145,13 @@ const Product = ({ editMode }) => {
     formData.append("price", values.price);
     formData.append("stock", values.stock);
     formData.append("available", values.available);
-    formData.append("image", fileList[0].originFileObj);
     values.categories.forEach((category) =>
       formData.append("categories", category)
     );
+
+    if (fileList[0].originFileObj) {
+      formData.append("image", fileList[0].originFileObj);
+    }
 
     try {
       setLoading(true);
@@ -134,10 +163,22 @@ const Product = ({ editMode }) => {
       setFileList([]);
       onSuccess();
     } catch (error) {
-      // console.error(error);
-
       const errorMessage = error.message || "Failed to update the product.";
       message.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await deleteProduct(slug);
+      message.success("Product is deleted now");
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.log(error);
+      message.error("Error in delete product");
     } finally {
       setLoading(false);
     }
@@ -151,19 +192,38 @@ const Product = ({ editMode }) => {
     );
   if (editMode && !product) return <div>Product not Found</div>;
 
+  const style = {
+    backgroundColor: "rgba(0, 0, 0, 0.98)",
+    color: "white",
+    width: "100%",
+    height: "4rem",
+    marginTop: 0,
+  };
+
   return (
     <>
       {!editMode ? (
-        <Title style={{ backgroundColor: "blue", color: "white" }}>
-          Add New Product
-        </Title>
+        <Title style={style}>Add New Product</Title>
       ) : (
-        <Title style={{ backgroundColor: "blue", color: "white" }}>
-          Update Product Details
-        </Title>
+        <Title style={style}>Update Product Details</Title>
       )}
       <Layout>
         <Content style={{ padding: "24px" }}>
+          {editMode ? (
+            <div
+              className="btn"
+              style={{
+                marginTop: 0,
+                marginBottom: 50,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button type="primary" danger onClick={handleDelete}>
+                Delete
+              </Button>
+            </div>
+          ) : null}
           <Row gutter={20}>
             <Col span={12}>
               <Form
@@ -204,17 +264,30 @@ const Product = ({ editMode }) => {
                   name={"image"}
                   valuePropName="fileList"
                   getValueFromEvent={normFile}
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: !editMode, message: "Please upload an image." },
+                  ]}
                 >
                   <Upload
                     listType="picture-card"
                     fileList={fileList}
                     onChange={onChange}
+                    onPreview={handlePreview}
                     accept="image/jpeg,image/png,image/svg"
                     beforeUpload={() => false}
                   >
                     {fileList.length < 1 && "+ Upload"}
                   </Upload>
+                  {previewImage && (
+                    <Image
+                      wrapperStyle={{ display: "none" }}
+                      preview={{
+                        visible: previewOpen,
+                        onVisibleChange: (visible) => setPreviewOpen(visible),
+                      }}
+                      src={previewImage}
+                    />
+                  )}
                 </Form.Item>
 
                 <Form.Item

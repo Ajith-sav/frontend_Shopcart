@@ -38,7 +38,18 @@ export const updateProduct = (slug, data) =>
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-//Search
+export const deleteProduct = (slug) => baseApi.delete(`products/${slug}`);
 
+//Search
 export const searchProducts = (query) =>
-  baseApi.get(`/products/search/?query=${query}`);
+  baseApi.get(`products/search/?query=${query}`);
+
+//Banner
+export const getBannerImage = () => baseApi.get("banners/images/");
+
+export const createBannerImage = (data) =>
+  baseApi.post("banners/images/", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+export const deleteImage = (id) => baseApi.delete(`banners/images/${id}/`);

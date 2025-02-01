@@ -1,3 +1,10 @@
 body {
   display: block !important;
 }
+
+.view-product{
+  margin: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+}

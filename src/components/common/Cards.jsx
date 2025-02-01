@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Flex } from "antd";
-import Signup from "./Signup";
-import Signin from "./Signin";
+import Signup from "../user/Signup";
+import Signin from "../user/Signin";
 const cardStyle = {
   width: 750,
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { List, Typography, Spin } from "antd";
-import { fetchCategory } from "../services/api";
+import { fetchCategory } from "../../services/api";
 
 const CategoryList = ({ refresh }) => {
   const [categories, setCategories] = useState([]);
@@ -36,7 +36,7 @@ const CategoryList = ({ refresh }) => {
       bordered
       style={{
         maxHeight: "550px",
-        overflowY: "auto", 
+        overflowY: "auto",
       }}
       dataSource={categories}
       renderItem={(item) => <List.Item>{item.name}</List.Item>}
