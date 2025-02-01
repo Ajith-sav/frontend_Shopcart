@@ -1,0 +1,12 @@
+.nav {
+  /* display: flex !important; */
+  text-align: end;
+}
+
+.header {
+  background: #001529;
+  display: flex;
+  /* margin: 1px 0px; */
+  /* align-items: flex-start; */
+  justify-content: space-between;
+}
