@@ -1,16 +1,22 @@
 import { useState } from "react";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Switch, Space, Select } from "antd";
 import { signupUser } from "../services/api";
+import "../styles/signup.css";
 
+const roleList = [
+  { role: "Vendor", values: "vendor" },
+  { role: "Customer", values: "customer" },
+];
+const { Option } = Select;
 const Signup = () => {
   const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState();
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
       const response = await signupUser(values);
       message.success("User registration successful.");
-      // console.log("Response Data : ", response);
     } catch (error) {
       if (error.response && error.response.data) {
         const errors = error.response.data;
@@ -30,10 +36,13 @@ const Signup = () => {
         layout={"vertical"}
         onFinish={onFinish}
         style={{
-          maxWidth: 600,
+          maxWidth: "100%",
           minWidth: 350,
-          marginTop: 20,
+          maxHeight: "30em",
+          marginTop: 40,
+          marginBottom: 20,
           paddingRight: 50,
+          overflow: "auto",
         }}
       >
         <Form.Item
@@ -62,6 +71,28 @@ const Signup = () => {
         >
           <Input placeholder="9087654321" />
         </Form.Item>
+
+        <Form.Item
+          label="Are you vendor or customer:"
+          name={"role"}
+          rules={[{ required: true }]}
+        >
+          <Select
+            placeholder="Select Option"
+            style={{ width: "100%" }}
+            value={selectedRole}
+            defaultValue={"customer"}
+            onChange={(value) => {
+              setSelectedRole(value);
+            }}
+            allowClear
+            options={roleList.map((data) => ({
+              value: data.values,
+              label: data.role,
+            }))}
+          />
+        </Form.Item>
+
         <Form.Item
           label="Password:"
           name="password"

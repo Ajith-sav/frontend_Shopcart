@@ -6,7 +6,7 @@ import {
   fetchProduct,
   updateProduct,
 } from "../services/api";
-import { PlusOutlined } from "@ant-design/icons";
+
 
 import {
   message,
@@ -47,7 +47,6 @@ const Product = ({ editMode }) => {
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [categories, setCategories] = useState([]);
-  const inputRef = useRef(null);
 
   const getCategories = async () => {
     try {
@@ -70,8 +69,6 @@ const Product = ({ editMode }) => {
     try {
       setLoading(true);
       const response = await fetchProduct(slug);
-      console.log(response.data.image);
-
       form.setFieldsValue({
         name: response.data.name,
         brand_name: response.data.brand_name,

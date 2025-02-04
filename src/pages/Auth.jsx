@@ -20,6 +20,7 @@ const Auth = () => {
         onChange={onChange}
         style={{
           marginBottom: 16,
+          zIndex: 10,
         }}
       >
         <Radio.Button value="signup">Sign up</Radio.Button>
