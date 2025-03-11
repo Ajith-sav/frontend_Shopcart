@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form, Input, message, Switch, Space, Select } from "antd";
+import { Button, Form, Input, message, Select } from "antd";
 import { signupUser } from "../../services/api";
 import "../../styles/Signup.css";
 
@@ -7,15 +7,15 @@ const roleList = [
   { role: "Vendor", values: "vendor" },
   { role: "Customer", values: "customer" },
 ];
-const { Option } = Select;
+
 const Signup = () => {
   const [loading, setLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState();
+  const [selectedRole, setSelectedRole] = useState("customer");
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await signupUser(values);
+      await signupUser(values);
       message.success("User registration successful.");
     } catch (error) {
       if (error.response && error.response.data) {
@@ -73,19 +73,11 @@ const Signup = () => {
         </Form.Item>
 
         <Form.Item
-          label="Are you vendor or customer:"
-          name={"role"}
-          rules={[{ required: true }]}
+          label="Customer type:"
+          name="role"
         >
           <Select
             placeholder="Select Option"
-            style={{ width: "100%" }}
-            value={selectedRole}
-            defaultValue={"customer"}
-            onChange={(value) => {
-              setSelectedRole(value);
-            }}
-            allowClear
             options={roleList.map((data) => ({
               value: data.values,
               label: data.role,

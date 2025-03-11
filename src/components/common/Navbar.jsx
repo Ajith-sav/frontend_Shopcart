@@ -13,6 +13,7 @@ import { signoutUser } from "../../services/api";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = ({ onSearch }) => {
+  const {loading, setLoading} = useUser();
   const { user } = useUser();
   const userName = user?.username || "Guest";
   const firstLetter = userName.charAt(0).toUpperCase();
@@ -20,6 +21,7 @@ const Navbar = ({ onSearch }) => {
 
   const logout = useCallback(async () => {
     try {
+      setLoading(true);
       const refreshToken = localStorage.getItem("refresh");
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
@@ -29,6 +31,8 @@ const Navbar = ({ onSearch }) => {
       }
     } catch (error) {
       message.error(error?.message || "Failed to logout");
+    } finally {
+      setLoading(false);
     }
   }, [navigate]);
 

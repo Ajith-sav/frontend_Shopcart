@@ -52,4 +52,6 @@ export const createBannerImage = (data) =>
     headers: { "Content-Type": "multipart/form-data" },
   });
 
+export const getImage = (id) => baseApi.get(`banners/images/${id}/`);
+
 export const deleteImage = (id) => baseApi.delete(`banners/images/${id}/`);

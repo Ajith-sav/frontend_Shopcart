@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Flex } from "antd";
 import Signup from "../user/Signup";
 import Signin from "../user/Signin";
+import ErrorBoundary from "../error/ErrorBoundary ";
 const cardStyle = {
   width: 750,
 };
@@ -39,7 +40,13 @@ const Cards = ({ component }) => {
               style={imgStyle}
             />
           )}
-          {component ? <Signin /> : <Signup />}
+          {component ? (
+            <ErrorBoundary>
+              <Signin />
+            </ErrorBoundary>
+          ) : (
+            <Signup />
+          )}
         </Flex>
       </Card>
     </div>

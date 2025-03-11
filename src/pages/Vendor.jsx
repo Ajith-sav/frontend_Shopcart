@@ -3,51 +3,25 @@ import { useNavigate } from "react-router-dom";
 import Views from "../components/common/Views";
 import { Flex, FloatButton, message, Spin } from "antd";
 import { PlusOutlined, DesktopOutlined } from "@ant-design/icons";
-import { fetchProducts, searchProducts, signoutUser } from "../services/api";
-import Navbar from "../components/common/Navbar";
+import { fetchProducts } from "../services/api";
 import { useUser } from "../contexts/UserContext";
+import { useProduct } from "../contexts/ProductContext";
 
 const Vendor = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { products, setProducts } = useProduct();
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { loading, setLoading, user } = useUser();
 
   const getData = useCallback(async () => {
     try {
       const response = await fetchProducts();
       setProducts(response.data);
     } catch (error) {
-      setError(error);
       message.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   }, []);
-
-  const logout = useCallback(async () => {
-    try {
-      const refreshToken = localStorage.getItem("refresh");
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
-      navigate("/auth", { replace: true });
-      if (refreshToken) {
-        await signoutUser(refreshToken);
-      }
-    } catch (error) {
-      message.error(error?.message || "Failed to logout");
-    }
-  }, [navigate]);
-
-  const searchAction = async (value) => {
-    try {
-      const response = await searchProducts(value);
-      setProducts(response.data);
-    } catch (error) {
-      message.error(error?.detail || "Failed to search products");
-    }
-  };
 
   useEffect(() => {
     getData();
@@ -62,9 +36,7 @@ const Vendor = () => {
 
   return (
     <>
-      <div style={{ width: "100%" }}>
-        <Navbar onSearch={searchAction} />
-      </div>
+      <div style={{ width: "100%" }}></div>
 
       <div>
         <Flex wrap gap={"10px"}>
@@ -82,15 +54,17 @@ const Vendor = () => {
             insetInlineEnd: 24,
           }}
         />
-        <FloatButton
-          icon={<PlusOutlined />}
-          type="primary"
-          tooltip="Add Product"
-          onClick={() => navigate("/product", { replace: true })}
-          style={{
-            insetInlineEnd: 24,
-          }}
-        />  
+        {user.role == "admin" ? (
+          <FloatButton
+            icon={<DesktopOutlined />}
+            type="primary"
+            tooltip="Add Product"
+            onClick={() => navigate("/banner", { replace: true })}
+            style={{
+              insetInlineEnd: 70,
+            }}
+          />
+        ) : null}
       </div>
     </>
   );

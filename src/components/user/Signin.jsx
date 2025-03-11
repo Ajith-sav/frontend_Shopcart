@@ -13,21 +13,23 @@ const Signin = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
-
     try {
       const response = await signinUser(values);
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
-      if (response.status == "200") {
+
+      if (response.status === 200) {
         const token = localStorage.getItem("access");
         fetchUserData(token);
         navigate("/home", { replace: true });
       }
     } catch (error) {
-      const errors = error?.response?.data || { error: "Invalid credentials" };
-      Object.keys(errors).forEach((key) => {
-        message.error(`${key}: ${errors[key]}`);
-      });
+      const errorMessage =
+        error?.response?.data?.detail ||
+        Object.values(error?.response?.data || {})[0] ||
+        "Signin failed. Please try again.";
+
+      message.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -52,7 +54,7 @@ const Signin = () => {
           { type: "email", message: "Invalid email format!" },
         ]}
       >
-        <Input placeholder="example@email.com" />
+        <Input placeholder="Enter your email here." />
       </Form.Item>
       <Form.Item
         label="Password:"

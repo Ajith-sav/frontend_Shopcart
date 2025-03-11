@@ -28,6 +28,7 @@ import Title from "antd/es/typography/Title";
 import CategoryForm from "./CategoryForm";
 import CategoryList from "./CategoryList";
 import { Content } from "antd/es/layout/layout";
+import { useUser } from "../../contexts/UserContext";
 
 const { TextArea } = Input;
 
@@ -53,7 +54,7 @@ const Product = ({ editMode }) => {
   const [form] = Form.useForm();
   const [available, setAvailable] = useState(false);
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useUser();
   const [fileList, setFileList] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -114,7 +115,7 @@ const Product = ({ editMode }) => {
   useEffect(() => {
     getCategories();
     editMode ? getProduct() : null;
-  }, []);
+  }, [refresh]);
 
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -265,7 +266,10 @@ const Product = ({ editMode }) => {
                   valuePropName="fileList"
                   getValueFromEvent={normFile}
                   rules={[
-                    { required: !editMode, message: "Please upload an image." },
+                    {
+                      required: editMode ? true : false,
+                      message: "Please upload an image.",
+                    },
                   ]}
                 >
                   <Upload

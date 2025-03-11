@@ -11,8 +11,6 @@ export const UserProvider = ({ children }) => {
   const fetchUserData = async (token) => {
     try {
       const response = await fetchUser(token);
-      // console.log(response.data);
-
       setUser(response.data);
     } catch (error) {
       console.error("Error fetching user data", error);

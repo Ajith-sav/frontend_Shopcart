@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Card } from "antd";
+import React from "react";
+import { Card, Rate } from "antd";
 import { useNavigate } from "react-router-dom";
 const { Meta } = Card;
 
@@ -10,45 +10,34 @@ const Views = ({ product }) => {
     : "Unknown Product";
   const category = product.categories?.[0] ?? { name: "Unknown Category" };
   const productImage = product.image || `http://localhost:8000${product.image}`;
+  const rating = product.rating || 4.5;
 
   const productInfo = async () => {
     if (!product.slug) return;
     navigate(`/product/${product.slug}`, { replace: true });
   };
+
   return (
-    <div style={{ margin: "30px", textAlign: "center" }}>
-      <Card
-        onClick={productInfo}
-        hoverable
-        style={{
-          width: 240,
-          height: 300,
-        }}
-        cover={
-          <div
-            style={{ display: "flex", justifyContent: "center", padding: 10 }}
-          >
-            <img
-              alt={category.name}
-              src={productImage}
-              style={{
-                marginTop: "25px",
-                maxWidth: "85%",
-                marginLeft: "-1.5rem",
-                height: "75%",
-                objectFit: "contain",
-              }}
-            />
-          </div>
-        }
-      >
-        <Meta
-          title={changeName}
-          description={`Price:${product.price ?? "N/A"}`}
-          style={{ marginTop: 20 }}
+    <Card
+      hoverable
+      style={{ width: 260, margin: 20 }}
+      onClick={productInfo}
+      cover={
+        <img
+          alt={category}
+          src={productImage}
+          style={{ height: 230, objectFit: "contain", marginTop: 25 }}
         />
-      </Card>
-    </div>
+      }
+    >
+      <Meta
+        title={changeName}
+        description={`Price: ${product.price ?? "N/A"}`}
+      />
+      <div style={{ marginTop: 10 }}>
+        <Rate allowHalf defaultValue={rating} disabled />
+      </div>
+    </Card>
   );
 };
 export default Views;
